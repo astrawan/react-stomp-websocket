@@ -2,6 +2,7 @@
   "name": "react-stomp-websocket",
   "version": "0.0.1",
   "description": "STOMP for JavaScript apps (React)",
+  "main": "src/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
