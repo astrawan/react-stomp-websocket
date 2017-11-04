@@ -113,7 +113,7 @@ class StompWebSocket {
     connect(login_, passcode_) {
         this._debug("Opening Web Socket...");
         var Socket = "MozWebSocket" in window ? MozWebSocket : WebSocket;
-        this._ws = new Socket(url);
+        this._ws = new Socket(this._url);
         this._ws.binaryType = "arraybuffer";
         this._ws.onmessage = this.onmessage;
         this._ws.onclose = function () {
