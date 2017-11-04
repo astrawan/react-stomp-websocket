@@ -2,7 +2,7 @@
 declare module "react-stomp-websocket" {
 
     export class StompWebSocket {
-        constructor(connectCallback: () => void, receiptCallback: () => void, errorCallback: () => void, closeCallback: () => void);
+        constructor(url: string, connectCallback: () => void, receiptCallback: () => void, errorCallback: () => void, closeCallback: () => void);
         connect(login: string, passcode: string): void;
         diconnect(disconnectCallback: () => void): void;
         send(destinaction: string, headers: Array<any>, body: any): void;

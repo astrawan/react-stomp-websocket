@@ -2,9 +2,10 @@
 
 class StompWebSocket {
 
-    constructor(connectCallback, receiptCallback, errorCallback, closeCallback) {
+    constructor(url, connectCallback, receiptCallback, errorCallback, closeCallback) {
         this._counter = 0;
         this._subscriptions = {};
+        this._url = url;
         this._ws = undefined;
 
         this._connectCallback = connectCallback;
