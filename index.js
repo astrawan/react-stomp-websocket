@@ -106,7 +106,7 @@ class StompWebSocket {
         }
     }
 
-    transmit(command, headers, body) {
+    _transmit(command, headers, body) {
         var out = this._marshal(command, headers, body);
         this._debug(">>> " + out);
         this._ws.send(out);
@@ -125,7 +125,7 @@ class StompWebSocket {
         };
         this._ws.onopen = function () {
             this._debug('Web Socket Opened...');
-            this.transmit("CONNECT", { login: login, passcode: passcode });
+            this._transmit("CONNECT", { login: login, passcode: passcode });
             // connectCallback handler will be called from onmessage when a CONNECTED frame is received
         };
         login = login_;
@@ -133,7 +133,7 @@ class StompWebSocket {
     }
 
     diconnect(disconnectCallback) {
-        this.transmit("DISCONNECT");
+        this._transmit("DISCONNECT");
         this._ws.close();
         if (disconnectCallback) {
             disconnectCallback();
@@ -143,7 +143,7 @@ class StompWebSocket {
     send(destination, headers, body) {
         var headers = headers || {};
         headers.destination = destination;
-        this.transmit("SEND", headers, body);
+        this._transmit("SEND", headers, body);
     }
 
     subscribe(destination, callback, headers) {
@@ -152,7 +152,7 @@ class StompWebSocket {
         headers.destination = destination;
         headers.id = id;
         this._subscriptions[id] = callback;
-        this.transmit("SUBSCRIBE", headers);
+        this._transmit("SUBSCRIBE", headers);
         return id;
     }
 
@@ -160,31 +160,31 @@ class StompWebSocket {
         var headers = headers || {};
         headers.id = id;
         delete this._subscriptions[id];
-        this.transmit("UNSUBSCRIBE", headers);
+        this._transmit("UNSUBSCRIBE", headers);
     }
 
     begin(transaction, headers) {
         var headers = headers || {};
         headers.transaction = transaction;
-        this.transmit("BEGIN", headers);
+        this._transmit("BEGIN", headers);
     }
 
     commit(transaction, headers) {
         var headers = headers || {};
         headers.transaction = transaction;
-        this.transmit("COMMIT", headers);
+        this._transmit("COMMIT", headers);
     }
 
     abort(transaction, headers) {
         var headers = headers || {};
         headers.transaction = transaction;
-        this.transmit("ABORT", headers);
+        this._transmit("ABORT", headers);
     }
 
     ack(message_id, headers) {
         var headers = headers || {};
         headers["message-id"] = message_id;
-        this.transmit("ACK", headers);
+        this._transmit("ACK", headers);
     }
 };
 
