@@ -1,15 +1,12 @@
 // (c) 2017 Astrawan -- wastrawan@gmail.com
 
 class StompWebSocket {
-    _counter = 0;
-    _subscriptions = {};
-    _ws = undefined;
-    _connectCallback = undefined;
-    _receiptCallback = undefined;
-    _errorCallback = undefined;
-    _closeCallback = undefined;
 
     constructor(connectCallback, receiptCallback, errorCallback, closeCallback) {
+        this._counter = 0;
+        this._subscriptions = {};
+        this._ws = undefined;
+
         this._connectCallback = connectCallback;
         this._receiptCallback = receiptCallback;
         this._errorCallback = errorCallback;

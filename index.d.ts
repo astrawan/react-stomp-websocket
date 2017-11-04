@@ -1,5 +1,6 @@
 
 declare module "react-stomp-websocket" {
+
     export class StompWebSocket {
         constructor(connectCallback?: () => void, receiptCallback?: () => void, errorCallback?: () => void, closeCallback?: () => void);
         connect(login: string, passcode: string): void;
@@ -12,4 +13,5 @@ declare module "react-stomp-websocket" {
         abort(transaction: any, headers: Array<any>): void;
         ack(message_id: string, headers: Array<any>): void;
     }
+
 }
