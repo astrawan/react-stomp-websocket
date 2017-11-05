@@ -1,17 +1,25 @@
 // (c) 2017 Astrawan -- wastrawan@gmail.com
 
 class StompWebSocket {
-
     constructor(url, connectCallback, receiptCallback, errorCallback, closeCallback) {
         this._counter = 0;
         this._subscriptions = {};
         this._url = url;
+        this._login = '';
+        this._passcode = '';
         this._ws = undefined;
 
         this._connectCallback = connectCallback;
         this._receiptCallback = receiptCallback;
         this._errorCallback = errorCallback;
         this._closeCallback = closeCallback;
+
+        this.STATE = {
+            CONNECTING: 0,
+            OPEN: 1,
+            CLOSING: 2,
+            CLOSED: 3
+        };
     }
 
     _frame(command, headers, body) {
@@ -22,7 +30,7 @@ class StompWebSocket {
             toString: () => {
                 var out = command + '\n';
                 if (headers) {
-                    for (header in headers) {
+                    for (var header in headers) {
                         if (headers.hasOwnProperty(header)) {
                             out = out + header + ': ' + headers[header] + '\n';
                         }
@@ -32,7 +40,7 @@ class StompWebSocket {
                 if (body) {
                     out = out + body;
                 }
-                return out;            
+                return out;
             }
         };
     }
@@ -49,7 +57,9 @@ class StompWebSocket {
             body = '';
 
         // Parse headers
-        var line = idx = null;
+        var line = null,
+            idx = null;
+
         for (var i = 0; i < headerLines.length; i++) {
             line = headerLines[i];
             idx = line.indexOf(':');
@@ -75,7 +85,8 @@ class StompWebSocket {
     }
 
     _debug(str) {
-
+        console.log('STOMP_WEB_SOCKET_DEBUG: ');
+        console.log(str);
     }
 
     onmessage(evt) {
@@ -111,26 +122,37 @@ class StompWebSocket {
     }
 
     connect(login_, passcode_) {
-        this._debug("Opening Web Socket...");
+        var that = this;
+
+        that._login = login_;
+        that._passcode = passcode_;
+
+        that._debug("Opening Web Socket...");
         var Socket = "MozWebSocket" in window ? MozWebSocket : WebSocket;
-        this._ws = new Socket(this._url);
-        this._ws.binaryType = "arraybuffer";
-        this._ws.onmessage = this.onmessage;
-        this._ws.onclose = function () {
-            var msg = "Whoops! Lost connection to " + url;
-            this._debug(msg);
-            this._closeCallback(msg);
+
+        that._ws = new Socket(that._url);
+        that._ws.binaryType = "arraybuffer";
+
+        that._ws.onmessage = that.onmessage;
+
+        that._ws.onmessage = (evt) => {
+            that.onmessage(evt);
         };
-        this._ws.onopen = function () {
-            this._debug('Web Socket Opened...');
-            this._transmit("CONNECT", { login: login, passcode: passcode });
+
+        that._ws.onclose = function () {
+            var msg = "Whoops! Lost connection to " + that._url;
+            that._debug(msg);
+            that._closeCallback(msg);
+        };
+
+        that._ws.onopen = function () {
+            that._debug('Web Socket Opened...');
+            that._transmit("CONNECT", { login: that._login, passcode: that._passcode });
             // connectCallback handler will be called from onmessage when a CONNECTED frame is received
         };
-        login = login_;
-        passcode = passcode_;
     }
 
-    diconnect(disconnectCallback) {
+    disconnect(disconnectCallback) {
         this._transmit("DISCONNECT");
         this._ws.close();
         if (disconnectCallback) {
@@ -183,6 +205,14 @@ class StompWebSocket {
         var headers = headers || {};
         headers["message-id"] = message_id;
         this._transmit("ACK", headers);
+    }
+
+    getState() {
+        if (this._ws) {
+            return this._ws.readyState;
+        }
+
+        return this.STATE.CLOSED;
     }
 };
 
