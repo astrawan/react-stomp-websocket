@@ -130,7 +130,7 @@ class StompWebSocket {
         that._debug("Opening Web Socket...");
         var Socket = "MozWebSocket" in window ? MozWebSocket : WebSocket;
 
-        that._ws = new Socket(that._url);
+        that._ws = new Socket(that._url, ['stomp']);
         that._ws.binaryType = "arraybuffer";
 
         that._ws.onmessage = that.onmessage;
