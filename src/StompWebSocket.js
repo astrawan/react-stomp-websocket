@@ -121,7 +121,7 @@ class StompWebSocket {
         this._ws.send(out);
     }
 
-    connect(login_, passcode_) {
+    connect(login_, passcode_, headers) {
         var that = this;
 
         that._login = login_;
@@ -146,7 +146,9 @@ class StompWebSocket {
         };
 
         that._ws.onopen = function () {
-            that._debug('Web Socket Opened...');
+			that._debug('Web Socket Opened...');
+			headers['login'] = that._login;
+			headers['passcode'] = that._passcode;
             that._transmit("CONNECT", { login: that._login, passcode: that._passcode });
             // connectCallback handler will be called from onmessage when a CONNECTED frame is received
         };
