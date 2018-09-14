@@ -96,7 +96,7 @@ StompWebSocket.prototype._frame = function (command, headers, body) {
 			if (headers) {
 				for (var header in headers) {
 					if (headers.hasOwnProperty(header)) {
-						out = out + header + ': ' + headers[header] + '\n';
+						out = out + header + ':' + headers[header] + '\n';
 					}
 				}
 			}
